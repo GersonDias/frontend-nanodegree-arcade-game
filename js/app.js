@@ -1,21 +1,33 @@
 var Character = function(){
-    
-};
-
-Character.prototype.update = function(dt){
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
-    alert('update ' + dt.contructor);
+    this.x = 0;
 };
 
 Character.prototype.render = function(){
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);    
 };
 
+Character.prototype.getRandomInit = function(min, max, factor){
+        var init = Math.floor(Math.random() * (max - min)) + min;
+        
+        while (init > 4) init -= 1;
+        
+        init *= 100;
+        
+        if (init % factor != 0)
+        {
+            init -= (init % factor);
+        }
+        
+        return init;
+};
+
 // Enemies our player must avoid
 var Enemy = function() {
     Enemy = Character.call(this);
+    this.correction = +30;
+    this.x = -200;
+    this.y = 0;
+    this.y = this.getRandomInit(0, 3, 100) + this.correction;
     
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
@@ -28,33 +40,25 @@ var Enemy = function() {
 Enemy.prototype = Object.create(Character.prototype);
 Enemy.prototype.contructor = Enemy;
 
+Enemy.prototype.update = function(dt){
+    this.x += 500 * dt;
+    if (this.x > 500) this.reset();
+};
+
+Enemy.prototype.reset = function(){
+    this.x = -200;
+    this.y = this.getRandomInit(0, 3, 100) + this.correction;
+};
+
 
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function(sprite){
-    this.sprite = sprite;   
-    this.x = getRandomInit();
-    this.y = 400;
     Character.call(this);
-    
-    function getRandomInit(){
-        var max = 5;
-        var min = 0;
-        
-        var init = Math.floor(Math.random() * (max - min)) + min;
-        
-        while (init > 4) init -= 1;
-        
-        init *= 100;
-        
-        if (init % 100 != 0)
-        {
-            init -= (init % 100);
-        }
-        
-        return init;
-    }
+    this.sprite = sprite;   
+    this.x = this.getRandomInit(0, 5, 100);
+    this.y = 400;
 };
 
 Player.prototype = Object.create(Character.prototype);
@@ -63,7 +67,8 @@ Player.prototype.constructor = Player;
 Player.prototype.handleInput = function(key){
     switch(key){
         case 'up':
-            if (this.y > 0) this.y -= 100;
+            if (this.y == 0) this.y = 500;
+            this.y -= 100;
             break;
         case 'down':
             if (this.y < 400) this.y += 100;
@@ -81,7 +86,7 @@ Player.prototype.handleInput = function(key){
 
 Player.prototype.update = function(){};
 
-allEnemies = [];
+allEnemies = [new Enemy()];
 player = new Player('images/char-boy.png');
 
 
@@ -96,9 +101,13 @@ player = new Player('images/char-boy.png');
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
         37: 'left',
+        65: 'left',
         38: 'up',
+        87: 'up',
         39: 'right',
-        40: 'down'
+        68: 'right',
+        40: 'down',
+        83: 'down'
     };
 
     player.handleInput(allowedKeys[e.keyCode]);

@@ -80,8 +80,23 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
-    }
+        checkCollisions();
+    };
+    
+    function checkCollisions(){
+        var playerPositionX = player.x;
+        var playerPositionY = player.y + 20;
+        
+        allEnemies.forEach(function(enemy){
+            var x = enemy.x / playerPositionX;
+            var y = enemy.y / playerPositionY;
+            
+            if ((x < 1.05 && x >= 0.98) && (y >= 1.04 && y <= 1.5))
+            {
+                player.y = 400;  
+            }
+        });
+    };
 
     /* This is called by the update function  and loops through all of the
      * objects within your allEnemies array as defined in app.js and calls
@@ -160,8 +175,7 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
-    }
+    };
 
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when
