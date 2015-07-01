@@ -91,7 +91,7 @@ var Engine = (function(global) {
             var x = enemy.x / playerPositionX;
             var y = enemy.y / playerPositionY;
             
-            if ((x < 1.05 && x >= 0.98) && (y >= 1.04 && y <= 1.5))
+            if (((playerPositionX == 0 && enemy.x == 0) || (x < 1.05 && x >= 0.98)) && (y >= 1.04 && y <= 1.5))
             {
                 player.y = 400;  
             }
